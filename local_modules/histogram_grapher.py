@@ -7,4 +7,4 @@ def histoGrapher(data_set, png_file_save):
     plt.xlabel('Distance (pixels)')
     plt.ylabel('Frequency')
     plt.xticks(bins)
-    plt.savefig(png_file_save)
+    plt.savefig('saved_plots/{}'.format(png_file_save))
