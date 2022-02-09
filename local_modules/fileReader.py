@@ -1,39 +1,31 @@
+import csv
 from math import sqrt
+from local_modules.localCalc import distCalc
 
-def fileRead(reader):
+def fileRead(file_path):
     areas = []
     lengths = []
     widths = []
     
-    for row in reader:
-        if row[1] == '' or row[3] == '' or row[5] == '':
-            continue
-        else:
-            for i,item in enumerate(row):
-                row[i] = int(item)
-            # x diff of green and yellow
-            green_yellow_x = abs(row[1] - row[5])
-            
-            # y diff of green and yellow
-            green_yellow_y = abs(row[2] - row[6])
-            
-            # x diff of pink and yellow
-            pink_yellow_x = abs(row[3] - row[5])
-            
-            # y diff of pink and yellow
-            pink_yellow_y = abs(row[4] - row[6])
+    with open(file_path, 'r') as data:
+        reader = csv.reader(data)
+        next(reader)
+        for row in reader:
+            if row[1] == '' or row[3] == '' or row[5] == '':
+                continue
+            else:
+                for i,item in enumerate(row):
+                    row[i] = int(item)
 
-            # distance green and yellow (length)
-            green_yellow_dist = sqrt(green_yellow_x**2 + green_yellow_y**2)
+                # will return length(green-yellow) and width(pink-yellow)
+                length, width = distCalc(row)
 
-            # distance pink and yellow (width)
-            pink_yellow_dist = sqrt(pink_yellow_x**2 + pink_yellow_y**2)
+                # calculate area
+                area = length * width
+                
+                # appending areas and distances
+                areas.append(area)
+                lengths.append(length)
+                widths.append(width)
 
-            # calculate area
-            area = green_yellow_dist * pink_yellow_dist
-            
-            # appending areas and distances
-            areas.append(area)
-            lengths.append(green_yellow_dist)
-            widths.append(pink_yellow_dist)
     return areas, lengths, widths
