@@ -1,72 +1,35 @@
 import csv
-import statistics as stat
-from math import sqrt
+from statistics import mean
 from local_modules.histogram_grapher import histoGrapher
-from local_modules.calculator import stError
+from local_modules.calculator import avglwArea, stError
+from local_modules.fileReader import fileRead
 
-areas = []
-green_yellow_dists = []
-pink_yellow_dists = []
-
-with open('data.csv', 'r') as data:
+with open('csv_files/data.csv', 'r') as data:
     reader = csv.reader(data)
-    for row in reader:
-        if row[1] == '' or row[3] == '' or row[5] == '':
-            continue
-        elif row[0] == 'frame_no':
-            continue
-        else:
-            for i,item in enumerate(row):
-                row[i] = int(item)
-            # x diff of green and yellow
-            green_yellow_x = abs(row[1] - row[5])
-            
-            # y diff of green and yellow
-            green_yellow_y = abs(row[2] - row[6])
-            
-            # x diff of pink and yellow
-            pink_yellow_x = abs(row[3] - row[5])
-            
-            # y diff of pink and yellow
-            pink_yellow_y = abs(row[4] - row[6])
+    next(reader)
+    avg_areas, lengths, widths = fileRead(reader)
 
-            # distance green and yellow (length)
-            green_yellow_dist = sqrt(green_yellow_x**2 + green_yellow_y**2)
-
-            # distance pink and yellow (width)
-            pink_yellow_dist = sqrt(pink_yellow_x**2 + pink_yellow_y**2)
-
-            # calculate area
-            area = green_yellow_dist * pink_yellow_dist
-            
-            # appending areas and distances
-            areas.append(area)
-            green_yellow_dists.append(green_yellow_dist)
-            pink_yellow_dists.append(pink_yellow_dist)
-
-pink_yellow_avg = stat.mean(pink_yellow_dists)
-green_yellow_avg = stat.mean(green_yellow_dists)
-area_avg_wl = pink_yellow_avg * green_yellow_avg
+avg_lw_area, len_avg, wid_avg = avglwArea(lengths, widths)
 
 # histogram for green-yellow distances(length)
-histoGrapher(green_yellow_dists, 'green_yellow_histogram')
+histoGrapher(lengths, 'lengths_histogram')
 
 # histogram for pink-yellow distances(width)
-histoGrapher(pink_yellow_dists, 'pink_yellow_histogram')
+histoGrapher(widths, 'widths_histogram')
 
-# Standard deviation of length values
-len_stError = stError(green_yellow_dists)
+# Standard error of length values
+len_stError = stError(data_set = lengths)
 
-# Standard deviation of width values
-wid_stError = stError(pink_yellow_dists)
+# Standard error of width values
+wid_stError = stError(data_set = widths)
 
-# Standard deviation of area values
-area_stError = stError(areas)
+# Standard error of area values
+area_stError = stError(data_set = avg_areas)
 
-print('Area calculated by averaging the area from each leg:', stat.mean(areas))
-print('Area calculated from averaging each leg and multiplying them:', area_avg_wl)
-print('Average length: ', green_yellow_avg)
-print('Average width: ', pink_yellow_avg)
+print('Area calculated by averaging the area from each leg:', mean(avg_areas))
+print('Area calculated from averaging each leg and multiplying them:', avg_lw_area)
+print('Average length: ', len_avg)
+print('Average width: ', wid_avg)
 print('Length Standard Error: ', len_stError)
 print('Width Standard Error: ', wid_stError)
 print('Area Standard Error: ', area_stError)
