@@ -1,5 +1,6 @@
 from statistics import stdev, mean
 from math import sqrt
+from types import NoneType
     
 # calculates and outputs standard error
 def stErrCalc(lengths, widths, areas):
@@ -9,14 +10,18 @@ def stErrCalc(lengths, widths, areas):
     # Standard area of width
     size = len(widths)
     wid_stError = stdev(widths)/(size**0.5)
-    # Standard error of area
+    # Standard error of statistical area
     size = len(areas)
     area_stError = stdev(areas)/(size**0.5)
+    # Standard error of propagated area
+    avg_area, len_avg, wid_avg = avgCalc(lengths, widths, areas)
+    area_propErr = avg_area * sqrt((len_stError/len_avg)**2 + (wid_stError/wid_avg)**2)
 
-    # output standard error values
+    # output standard/propagated error values
+    print('Area (Statistical) Standard Error: ', area_stError)
+    print('Area (Propagated) Propagated Error: ', area_propErr)
     print('Length Standard Error: ', len_stError)
     print('Width Standard Error: ', wid_stError)
-    print('Area Standard Error: ', area_stError)
 
     return
 
@@ -28,12 +33,12 @@ def avgCalc(lens, wids, areas):
     avg_area = mean(areas) # average of areas for each leg
 
     # output averages
-    print('Average of areas for each leg (Method 1):', avg_area)
-    print('Area from average of each leg (Method 2):', avg_lw_area)
+    print('Area (Propagated):', avg_area)
+    print('Area (Statistical):', avg_lw_area)
     print('Average length: ', len_avg)
     print('Average width: ', wid_avg)
 
-    return
+    return avg_area, len_avg, wid_avg
 
 # calculates the distances between each point for length and width values
 def distCalc(row):
