@@ -1,5 +1,4 @@
 import csv
-from math import sqrt
 from local_modules.localCalc import distCalc
 
 def fileRead(file_path):
